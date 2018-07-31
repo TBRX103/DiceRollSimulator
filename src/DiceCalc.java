@@ -21,7 +21,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
-package dicecalc;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -61,12 +60,14 @@ public class DiceCalc {
             return;
         }
 
+        //Allocate threads
         for (int i = 0; i < NUM_THREADS; i++) {
             THREADS.add(new DiceThread());
         }
-        THREADS.forEach((t) -> {
-            t.start();
-        });
+
+        THREADS.forEach(Thread::start);
+
+
         while (!FINISHED.get()) {
             try {
                 Thread.sleep(SLEEP_CHECK_DELAY_MS);
@@ -80,7 +81,6 @@ public class DiceCalc {
     static class DiceThread extends Thread {
 
         final SecureRandom rand = new SecureRandom();
-        final int[] rolls = new int[NUM_ROLLS_TO_MATCH];
 
         @Override
         public void run() {
@@ -93,18 +93,15 @@ public class DiceCalc {
         }
 
         private void doRoll() {
-            for (int i = 0; i < rolls.length; i++) {
-                rolls[i] = rand.nextInt(NUM_SIDED_DIE) + 1;
-            }
-
-            for (int i = 0; i < rolls.length; i++) {
-                if (rolls[i] != DICE_VALUE) {
+            for (int i = 0; i < NUM_ROLLS_TO_MATCH; i++) {
+                int roll = rand.nextInt(NUM_SIDED_DIE) + 1;
+                if (roll != DICE_VALUE)
                     if (!FINISHED.get()) {
                         TRIES.incrementAndGet();
+                        return;
                     }
-                    return;
-                }
             }
+
             TRIES.incrementAndGet();
             FINISHED.set(true);
         }
