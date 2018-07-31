@@ -39,7 +39,6 @@ public class DiceCalc {
     private static final int NUM_SIDED_DIE = 6;
     private static final int NUM_THREADS = Runtime.getRuntime().availableProcessors();
     private static final long SLEEP_CHECK_DELAY_MS = 100;
-    private static final List<DiceThread> THREADS = new ArrayList<>();
     private static final AtomicLong TRIES = new AtomicLong(0);
 
     /**
@@ -62,8 +61,7 @@ public class DiceCalc {
         }
 
         //Allocate threads
-        IntStream.range(0, NUM_THREADS).mapToObj(i -> new DiceThread()).forEach(THREADS::add);
-        THREADS.forEach(Thread::start);
+        IntStream.range(0, NUM_THREADS).mapToObj(i -> new DiceThread()).forEach(Thread::start);
 
         while (!FINISHED.get()) {
             try {
