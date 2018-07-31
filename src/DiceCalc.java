@@ -79,10 +79,7 @@ public class DiceCalc {
 
         @Override
         public void run() {
-            while (true) {
-                if (FINISHED.get()) {
-                    return;
-                }
+            while (!FINISHED.get()) {
                 doRoll();
             }
         }
