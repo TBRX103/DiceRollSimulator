@@ -29,6 +29,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.IntStream;
 
 public class DiceCalc {
 
@@ -61,12 +62,8 @@ public class DiceCalc {
         }
 
         //Allocate threads
-        for (int i = 0; i < NUM_THREADS; i++) {
-            THREADS.add(new DiceThread());
-        }
-
+        IntStream.range(0, NUM_THREADS).mapToObj(i -> new DiceThread()).forEach(THREADS::add);
         THREADS.forEach(Thread::start);
-
 
         while (!FINISHED.get()) {
             try {
